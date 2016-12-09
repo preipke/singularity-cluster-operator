@@ -1,0 +1,73 @@
+
+### Client requirements:
+
+- Java 8 (with JavaFX support, i.e. Oracle, not OpenJDK) or higher
+
+
+### How it works
+
+- uses BiBiGrid to initialize and terminate clusters
+- uses Openstack4J / SWIFT to create and delete storage containers
+- uses Singularity REST API to deploy and monitor tasks
+
+
+### Setting up images on your Openstack cluster
+
+Hubspot Singularity is build on top of the Apache Mesos framework. To effectively execute tasks, 
+all you have  to do is run the Singularity service on your configured Mesos master and then use 
+the Singularity REST API or web interface.
+
+Master image requirements:
+- Mesos (& Zookeeper)
+- Java 8 (i.e. OpenJDK) or higher
+
+Then just place the SingularityService-0.6.1.jar and singularity-config.yaml within the home 
+directory (~/). The application will run the JAR after the instance has been initialized.
+
+Slave image requirements:
+- Mesos
+- python-swiftclient (for tasks implemented by the application)
+- ncbi-blast+ (for tasks implemented by the application)
+
+
+### How to use the application
+
+Start the application by running the executable JAR file. The GUI will show up. 
+
+On the "Authentification" tab, enter your valid openstack credentials.
+
+On the "Cluster Setup" tab, specify your master and slave options and select the input file.
+The only yet implemented task is to perform a BLASTP, so this should be a file containing
+one or multiple BLASTP queries.
+
+The application will try to import a "openstack.properties" file from within the working directory.
+If no such file is found, default properties will be used but can be overwritten at any time by
+using the "Import Properties" button.
+
+Notice: Selecting "Use Defaults" will keep any existing default properties.
+
+Notice: The default porperties are stored within the application and can be outdated. Therefore
+you should always import your own properties. Use the according option in the GUI or place your
+openstack.properties file within the actual working directory to import it automatically.
+
+
+### TODO:
+
+Most available options for the GUI are hardcoded. Though the application does not rely
+on the manual selection of properties (due to the import functionality), option choices 
+should be created dynamically using openstack4j (instance flavors, network, ...) by getting
+them after authentification.
+
+The BLASTP is currently the default task to be executed. On implementation of further 
+tasks, an option for selecting the according tasks has to be created internally and 
+within the GUI. Therefore, an interface (edu.unibi.cluster.tasks.ITasks) is already 
+present.
+
+
+### References:
+
+https://www.openstack.org/ - Openstack
+http://mesos.apache.org/ - Apache Mesos
+http://getsingularity.com/ - Hubspot Singularity
+https://wiki.cebitec.uni-bielefeld.de/bibiserv-1.25.2/index.php/BiBiGrid - Bielefeld University BiBiGrid
+
